@@ -20,6 +20,8 @@ import { generateMeta } from '../../_utilities/generateMeta'
 // If you are not using Payload Cloud then this line can be removed, see `../../../README.md#cache`
 export const dynamic = 'force-dynamic'
 
+import Categories from '../../_components/Categories'
+
 import classes from './index.module.scss'
 
 export default async function Page({ params: { slug = 'home' } }) {
@@ -37,10 +39,7 @@ export default async function Page({ params: { slug = 'home' } }) {
 
     categories = await fetchDocs<Category>('categories')
   } catch (error) {
-    // when deploying this template on Payload Cloud, this page needs to build before the APIs are live
-    // so swallow the error here and simply render the page with fallback data where necessary
-    // in production you may want to redirect to a 404  page or at least log the error somewhere
-    // console.error(error)
+    console.log(error)
   }
 
   // if no `home` page exists, render a static one using dummy content
@@ -62,7 +61,9 @@ export default async function Page({ params: { slug = 'home' } }) {
         <section>
           <Hero {...hero} />
 
-          <Gutter>{/* Categories */}</Gutter>
+          <Gutter className={classes.home}>
+            <Categories categories={categories} />
+          </Gutter>
         </section>
       ) : (
         <>
@@ -98,6 +99,7 @@ export async function generateMetadata({ params: { slug = 'home' } }): Promise<M
       draft: isDraftMode,
     })
   } catch (error) {
+    console.log(error)
     // don't throw an error if the fetch fails
     // this is so that we can render a static home page for the demo
     // when deploying this template on Payload Cloud, this page needs to build before the APIs are live
